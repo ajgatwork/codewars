@@ -16,9 +16,7 @@ function bridge(islands) {
   tree.add(0);
   remaining.delete(0);
      
-  let edges = new Array();
-  //calculate the distance between all nodes
-
+  let edges = new SortedLinkedList();
 
   var newone = 0;
 
@@ -26,23 +24,22 @@ function bridge(islands) {
     // refresh the list of edges from the tree
     remaining.forEach((island) => {
       let d = dist(islands[newone],islands[island]);
-      edges.push({v1:newone, v2:island, d:d})
+      edges.add(newone, island, d)
     });
   
-    edges.sort((a,b) => a.d - b.d);
     //console.log(edges);  
     // pick the shortest path to a node not in tree
     // ordered so just pick the first one
-   var shortest = edges.shift();
+   var shortest = edges.getShortest();
    total += shortest.d;
     // put that node in the tree
    newone = (tree.has(shortest.v1)) ? shortest.v2:shortest.v1;
    tree.add(newone);
    remaining.delete(newone);
    // filter out edges that dont count any more
-       console.log("pre filter "+edges.length);
-   edges = edges.filter((elem) => elem.v1!=newone && elem.v2!=newone);
-   console.log("post filter "+edges.length);
+       console.log("pre filter "+edges.size);
+   edges.pruneVertex(newone);
+   console.log("post filter "+edges.size);
   }
   //console.log(total);
   return total;
@@ -60,8 +57,8 @@ class SortedLinkedList {
     return this.#size;
   }
   
-  createElement(v1,v2,d) {
-    return {value:{from:v1, to:v2, distance:d}, next: null};
+  createElement(v1,v2,dist) {
+    return {value:{v1:v1, v2:v2, d:dist}, next: null};
   }
   
   add(from,to,distance) {
@@ -73,7 +70,7 @@ class SortedLinkedList {
       let current = this.head;
       let previous = null;
 
-      while (current && element.value.distance > current.value.distance ) {
+      while (current && element.value.d > current.value.d ) {
         previous = current;
         current = current.next;
       }
@@ -100,7 +97,7 @@ class SortedLinkedList {
     let previous = null;
     while (current!=null) {
       //console.log(">>"+current.value.from);
-      if (current.value.from==vertex || current.value.to==vertex) {
+      if (current.value.v1==vertex || current.value.v2==vertex) {
         //prune     
         if (previous==null) { //prune from start
           this.head=current.next;
@@ -127,11 +124,11 @@ class SortedLinkedList {
   toString() {
     if(!this.size) return 'size 0 ';
     
-    let str = "size "+this.#size+" ["+this.head.value.from+","+this.head.value.to+","+this.head.value.distance+"]";
+    let str = "size "+this.#size+" ["+this.head.value.v1+","+this.head.value.v2+","+this.head.value.d+"]";
     let current = this.head.next;
     
     while(current) {
-      str += "->"+"["+current.value.from+","+current.value.to+","+current.value.distance+"]";
+      str += "->"+"["+current.value.v1+","+current.value.v2+","+current.value.d+"]";
       current = current.next;
     }
     

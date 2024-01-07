@@ -19,11 +19,12 @@ function bridge(islands) {
   //
   // use sparse arrays
   // calculate all distances between all islands
-  var edges = new Array();
+  // pre-allocating memory in Arrays saves a lot of time!
+  var edges = new Array(islands.length);
 
   var start = Date.now();
   for(let i=0;i<islands.length;i++) {
-    edges[i] = new Array();
+    edges[i] = new Array(islands.length);
     for(let j=i+1;j<islands.length;j++) {
       edges[i][j] = dist(islands[i],islands[j]);
     }
@@ -52,8 +53,9 @@ function bridge(islands) {
         a = remaining[j];
       }
       //console.log("checking "+a+" "+b+" "+edges[a][b]+" against "+shortest);
-      if (edges[a][b] < shortest.d) {
-        shortest = {v1:a, v2:b, d:edges[a][b]};
+      var l = edges[a][b];
+      if (l < shortest.d) {
+        shortest = {v1:a, v2:b, d:l};
         //console.log(shortest);
       }
     }
@@ -72,6 +74,6 @@ function bridge(islands) {
   return total;
 }
 
-function dist( p1,p2) { return Math.sqrt(Math.abs(p1[0]-p2[0])*Math.abs(p1[0]-p2[0])
-                                  + Math.abs(p1[1]-p2[1])*Math.abs(p1[1]-p2[1]))}
+function dist( p1,p2) { return Math.sqrt(Math.abs(p1[0]-p2[0])**2
+                                  + Math.abs(p1[1]-p2[1])**2)}
 

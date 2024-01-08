@@ -50,7 +50,7 @@ function puzzle(s) {
 
 //console.log(isPrime(2))
 //console.log(checkCriteria(95,2))
-console.log(countKprimes(2,94,94))
+console.log(countKprimes(2,94,100))
 //8 10000000 10000200
 //console.log(countKprimes(8,10000000,10000200))
 //console.log(primeFactors(8))

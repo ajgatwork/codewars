@@ -1,0 +1,30 @@
+function nextBigger(n){
+    //your code here
+    let v = p(""+n)
+    let integers = v.map((elem) => +elem).sort((a,b) => a-b)
+    let is = [...new Set(integers)]
+    let k= is.indexOf(n)
+    return (k==is.length) ? -1:is[k+1]
+
+  }
+
+  function p(str) {
+    let perms = []
+    if (str.length<=2) {
+        perms.push(str)
+        perms.push(str.split("").reverse().join(""))
+        return perms
+    }
+
+    for(let i=0;i< str.length;i++) {
+        let ns="";
+        for(let j=0;j<str.length;j++) {
+            if (i!=j) ns=ns.concat(str[j])
+        }
+        let pp = p(ns)
+        perms=perms.concat(pp.map((elem) => str[i]+elem))
+    }
+    return perms
+}
+
+console.log(nextBigger(1234567890))
